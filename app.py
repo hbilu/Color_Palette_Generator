@@ -33,9 +33,9 @@ def scale_image_if_needed(img):
             break  # Stop after first applicable scale
     return img
 
-# Function to reduce the number of bits per color channel (4 bits per channel) in the image
+# Function to reduce the number of bits per color channel (3 bits per channel) in the image
 def reduce_bits_per_channel(img):
-    img = ImageOps.posterize(img, 4)
+    img = ImageOps.posterize(img, 3)
     return img
 
 # Function to convert the image into a numpy array
@@ -43,13 +43,13 @@ def convert_to_numpy_array(img):
     image_array = np.array(img)
     return image_array
 
-def get_top_10_colors(image_array):
+def get_top_15_colors(image_array):
     """
-    Retrieves the top 10 most occurring colors from the input image array.
+    Retrieves the top 15 most occurring colors from the input image array.
     Args:
         image_array (numpy.ndarray): Numpy array representing the image.
     Returns:
-        list: List of RGB tuples representing the top 10 most frequent colors in the image.
+        list: List of RGB tuples representing the top 15 most frequent colors in the image.
     """
     # Initialize a defaultdict to store color frequencies
     unique_color_counts = defaultdict(int)
@@ -59,9 +59,9 @@ def get_top_10_colors(image_array):
             unique_color_counts[tuple(rgb)] += 1
     # Sort the dictionary items based on the count of each color tuple in descending order
     sorted_unique_colors = sorted(unique_color_counts.items(), key=lambda x: x[1], reverse=True)
-    # Extract the top 10 most frequent color tuples from the sorted list
-    top_10 = [color[0] for color in sorted_unique_colors[:10]]
-    return top_10
+    # Extract the top 15 most frequent color tuples from the sorted list
+    top_15 = [color[0] for color in sorted_unique_colors[:15]]
+    return top_15
 
 def rgb_to_hex(rgb):
     """
@@ -106,13 +106,13 @@ def analyze_image_colors(path, code):
     img = scale_image_if_needed(img)
     img = reduce_bits_per_channel(img)
     image_array = convert_to_numpy_array(img)
-    top_10_colors = get_top_10_colors(image_array)
+    top_15_colors = get_top_15_colors(image_array)
     if code == 'hex':
-        return [rgb_to_hex(color) for color in top_10_colors]
+        return [rgb_to_hex(color) for color in top_15_colors]
     elif code == 'cmyk':
-        return [rgb_to_cmyk(color) for color in top_10_colors]
+        return [rgb_to_cmyk(color) for color in top_15_colors]
     else:
-        return top_10_colors
+        return top_15_colors
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
