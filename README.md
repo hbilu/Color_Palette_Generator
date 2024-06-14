@@ -1,4 +1,4 @@
-This web application, built on Flask, allows users to upload images for analysis, identifying the top 10 colors in RGB, Hex, or CMYK formats.
+This web application, built on Flask, allows users to upload images for analysis, identifying the top 15 colors in RGB, Hex, or CMYK formats.
 
 The "app.py" file, written in Python and utilizing Flask, processes uploaded images to extract and display the top 10 colors in RGB, Hex, or CMYK format.
 
