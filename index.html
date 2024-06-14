@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palette Generator</title>
+    <style>
+        * {box-sizing: border-box;}
+        header, form, main {
+            width: 80%;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 1rem;
+            padding: 1rem;
+            margin: auto;
+        }
+        header > h1 {color: blue; font-size: 2rem; text-align: center; margin-bottom: 1.5rem;}
+        header > p {color: black; font-size: 1.2rem; margin: 10px 5px;}
+        form {background-color: rgba(128, 255, 0, 0.895); padding: 1rem; margin-bottom: 1.5rem;}
+        input:hover {cursor: pointer;}
+        input[type='submit'], input[type='file'] {font-size: 1rem; margin-bottom: 0.5rem;}
+        input[type='file'] {margin-left: 1rem;}
+        input[type='submit'] {
+            background-color: black;
+            color: white;
+            border: 2px solid black;
+            padding: 0.5rem 2rem;
+            cursor: pointer;
+        }
+        input[type='radio'] {margin: 0.5rem 1rem 0.5rem 0; cursor: pointer;}
+        .flex-container {display: flex; justify-content: space-between; align-items: flex-start;}
+        .color-container {width: 60%;}
+        .image-container {width: 35%;}
+        .color_pair {display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;}
+        .color_pair > .paint, .color_pair > .text {
+            width: 48%;
+            height: 50px;
+            border: 1px solid black;
+            text-align: center;
+            padding: 0.75rem;
+        }
+        label[for="rgb"], label[for="hex"], label[for="cmyk"] { margin-right: 3rem;}
+        .uploaded-image img {max-width: 100%; height: auto; border: 1px solid black;}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Color Palette Generator</h1>
+        <p>Upload an image to see its main colors displayed as a palette. &#127912; &#x1F47E;</p>
+    </header>
+    <form action="/" method="POST" enctype="multipart/form-data">
+        <label for="image">Upload Image:</label>
+        <input type="file" id="image" name="image" accept="image/*" required />
+        <br>
+        <fieldset>
+            <legend>Select the color code:</legend>
+            <label for="rgb">
+                <input type="radio" id="rgb" name="code" value="rgb" required /> RGB 
+            </label>
+            <label for="hex">
+                <input type="radio" id="hex" name="code" value="hex" /> Hex 
+            </label>
+            <label for="cmyk">
+                <input type="radio" id="cmyk" name="code" value="cmyk" /> CMYK
+            </label>
+        </fieldset>
+        <br>
+        <input type="submit" value="Generate Palette" /> 
+    </form>
+    <main class="flex-container">
+        <div class="color-container">
+            {% for i in range(color_list|length) %}
+                <div class="color_pair">
+                    {% if code == 'rgb' %}
+                        <div class="paint" style="background-color: rgb{{color_list[i]}};"></div>
+                        <div class="text">{{ i+1 }}: &emsp;rgb{{color_list[i]}}</div>
+                    {% elif code == 'hex' %}
+                        <div class="paint" style="background-color: #{{color_list[i]}};"></div>
+                        <div class="text">{{ i+1 }}: &emsp;#{{color_list[i]}}</div>
+                    {% else %}
+                        <div class="paint" style="background-color: rgb{{(1-color_list[i][0]) * (1-color_list[i][3]) * 255, (1-color_list[i][1]) * (1-color_list[i][3]) * 255, (1-color_list[i][2]) * (1-color_list[i][3]) * 255}};"></div>
+                        <div class="text">{{ i+1 }}: &emsp;cmyk({{color_list[i][0]}}, {{color_list[i][1]}}, {{color_list[i][2]}}, {{color_list[i][3]}})</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if uploaded_image %}
+            <div class="image-container">
+                <div class="uploaded-image">
+                    <img src="{{ url_for('static', filename='images/' + uploaded_image) }}" alt="Uploaded Image">
+                </div>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>
